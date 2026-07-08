@@ -32,19 +32,19 @@ class TtsResponse:
 @dataclass
 class TtsRequest:
     def looks_like_dir(self) -> bool:
-        """必须是绝对路径，且最后一段不含文件扩展名"""
+        """必须是绝对路径,且最后一段不含文件扩展名"""
         if not self.save_path:
             return False
         # 必须是绝对路径
         if not os.path.isabs(self.save_path):
             return False
-        # 去掉末尾分隔符，取最后一段
+        # 去掉末尾分隔符,取最后一段
         last = os.path.basename(self.save_path.rstrip('/\\'))
-        # 最后一段不含点，说明不像文件
+        # 最后一段不含点,说明不像文件
         return '.' not in last
 
-    text: str
-    save_path: str                  # 音频文件保存路径
+    text: str = ""                  # 待合成文本
+    save_path: str = ""             # 音频文件保存路径
     voice_id: int = 101008          # 音色
     voice_source: str = "offical"   # 音色来源: offical(官方音色) 或 personal(个人音色)
     volume: float = 0               # 音量 [-10, 10]
@@ -52,29 +52,33 @@ class TtsRequest:
     primary_language: int = 1       # 主语言类型: 1 (中文) 或 2 (英文)
     sample_rate: int = 16000        # 音频采样率: 16000 或 8000
     enable_subtitle: bool = True    # 是否开启字幕
-    # emotion_category: str = ""    # 音频情感，仅支持多情感音色使用。取值: neutral(中性)、sad(悲伤)、happy(高兴)、angry(生气)、fear(恐惧)、news(新闻)、story(故事)、radio(广播)、poetry(诗歌)、call(客服)、sajiao(撒娇)、disgusted(厌恶)、amaze(震惊)、peaceful(平静)、exciting(兴奋)、aojiao(傲娇)、jieshuo(解说)
-    # emotion_intensity: float = 0  # 情感程度，取值范围为[50,200],默认为100；只有EmotionCategory不为空时生效。
+    # emotion_category: str = ""    # 音频情感,仅支持多情感音色使用。取值: neutral(中性)、sad(悲伤)、happy(高兴)、angry(生气)、fear(恐惧)、news(新闻)、story(故事)、radio(广播)、poetry(诗歌)、call(客服)、sajiao(撒娇)、disgusted(厌恶)、amaze(震惊)、peaceful(平静)、exciting(兴奋)、aojiao(傲娇)、jieshuo(解说)
+    # emotion_intensity: float = 0  # 情感程度,取值范围为[50,200],默认为100；只有EmotionCategory不为空时生效。
 
     def __post_init__(self):
         # 1. 取值校验
         # 1.1 volume 范围 [-10, 10]
         if not -10 <= self.volume <= 10:
-            raise ValueError(f"volume(音量) 必须在 [-10, 10] 范围内，当前: {self.volume}")
+            raise ValueError(f"volume(音量) 必须在 [-10, 10] 范围内")
         # 1.2 speed 范围 [-2, 6]
         if not -2 <= self.speed <= 6:
-            raise ValueError(f"speed(语速) 必须在 [-2, 6] 范围内，当前: {self.speed}")
-        # 1.3 primary_language 只能为 1 或 2（1 为中文，2 为英文）
+            raise ValueError(f"speed(语速) 必须在 [-2, 6] 范围内")
+        # 1.3 primary_language 只能为 1 或 2（1 为中文,2 为英文）
         if self.primary_language not in [1, 2]:
-            raise ValueError(f"primary_language(主语言类型) 必须为 1 (中文) 或 2 (英文)，当前: {self.primary_language}")
+            raise ValueError(f"primary_language(主语言类型)必须为 1 (中文) 或 2 (英文)")
         # 1.4 sample_rate 只能为 16000 或 8000
         if self.sample_rate not in [16000, 8000]:
-            raise ValueError(f"sample_rate(音频采样率) 必须为 16000 或 8000, 当前: {self.sample_rate}")
-        # 1.5 save_path 不能为空，且必须是一个目录（可以不存在，不存在时会自动创建）
+            raise ValueError(f"sample_rate(音频采样率)必须为 16000 或 8000")
+        # 1.5 save_path 不能为空,且必须是一个目录（可以不存在,不存在时会自动创建）
         if not self.save_path or not self.looks_like_dir():
-            raise ValueError(f"save_path(音频文件保存路径) 不能为空，且必须是一个目录, 当前: {self.save_path}")
+            raise ValueError(f"save_path(音频文件保存路径)不能为空, 且必须是一个目录")
         # 1.6 voice_source 只能为 offical 或 personal
         if self.voice_source not in ["offical", "personal"]:
-            raise ValueError(f"voice_source(音色来源) 必须为 offical(官方音色) 或 personal(个人音色)，当前: {self.voice_source}")
+            raise ValueError(f"voice_source(音色来源)必须为 offical(官方音色) 或 personal(个人音色)")
+        # 1.7 text 不能为空
+        if not self.text:
+            raise ValueError(f"text(待合成文本)不能为空")
+
 
 
         # 2. speed 截断到两位小数（非四舍五入）

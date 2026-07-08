@@ -1,8 +1,10 @@
 
 import base64
+import json
 import os
 import re
 import struct
+import sys
 import unicodedata
 import uuid 
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -386,7 +388,11 @@ def execute(parameters: dict[str, Any]):
         raise ValueError("TENCENT_ACCESS_SECRET_ID 和 TENCENT_ACCESS_SECRET_KEY 不能为空")
 
     # 解析参数
-    request = TtsRequest(**parameters)
+    try:
+        request = TtsRequest(**parameters)
+    except ValueError as e:
+        print({"success": False, "message": str(e),})
+        return
 
     engine: Optional[LongTextTtsEngine] = None
     try:
@@ -431,15 +437,16 @@ def execute(parameters: dict[str, Any]):
             engine.close()
 
 
-if __name__ == "__main__":
-    long_text = (
-        "阳光透过疏朗的梧桐叶，在木质书桌上投下斑驳的碎影。"
-        "风携着微凉的桂香从半开的窗缝溜进来。"
-    )
+def main():
+    input_data = sys.stdin.read().strip()
+    if not input_data:
+        input_data = "{}"
+        
+    request = json.loads(input_data)
+    execute(request.get("parameters", {}))
 
-    parameters = {
-        "text": long_text,
-        "enable_subtitle": False,
-        "save_path": "/home/nie/workspace/tts/robot-tts-plugin/results/",
-    }
-    execute(parameters)
+if __name__ == "__main__":
+    main()
+
+
+
