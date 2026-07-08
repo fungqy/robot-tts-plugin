@@ -1,0 +1,2 @@
+python-dotenv=1.2.2
+tencentcloud-sdk-python=3.1.129

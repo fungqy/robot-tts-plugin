@@ -1,0 +1,52 @@
+id: text_to_voice
+version: 1.0.0
+name: text_to_voice
+description: 合成语音
+category: voice
+
+execution:
+  type: custom_package
+  run_mode: python
+  entry: scripts/invoke.py
+  runtime: python3.10
+  timeout: 60
+
+parameters:
+  type: object
+  required: [text, save_path]
+  properties:
+    text:
+      type: string
+      description: "生成语音的文本内容（必填）"
+    save_path:
+      type: string
+      description: "保存音频文件位置(必填)"
+    voice_source:
+      type: string
+      description: "音色来源(可选值: offical 或 personal, 默认: offical)"
+    volume:
+      type: string
+      description: "音量大小(可选范围: [-10, 10], 默认: 0)"
+    speed:
+      type: string
+      description: "语速(可选范围: [-2, 6], 默认: 1.0)"
+    primary_language:
+      type: string
+      description: "主语言(可选值: 1 或 2, 默认: 1, 1 为中文, 2 为英文)"
+    sample_rate:
+      type: string
+      description: "音频采样率(可选值: 16000 或 8000, 默认: 16000)"
+    enable_subtitle:
+      type: string
+      description: "是否开启字幕(可选值: true 或 false, 默认: true)"
+
+returns:
+  type: object
+  properties:
+    success: { type: boolean }
+    message: { type: string }
+    data: { type: object }
+
+dependencies:
+  python:
+    - "rcp-server-sdk>=1.0.0"
