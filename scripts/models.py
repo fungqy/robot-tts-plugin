@@ -45,7 +45,7 @@ class TtsRequest:
 
     text: str = ""                  # 待合成文本
     save_path: str = ""             # 音频文件保存路径
-    voice_id: int = 101008          # 音色
+    voice_id: str = "101008"        # 音色
     voice_source: str = "offical"   # 音色来源: offical(官方音色) 或 personal(个人音色)
     volume: float = 0               # 音量 [-10, 10]
     speed: float = 1.0              # 语速 [-2, 6]
@@ -59,27 +59,25 @@ class TtsRequest:
         # 1. 取值校验
         # 1.1 volume 范围 [-10, 10]
         if not -10 <= self.volume <= 10:
-            raise ValueError(f"volume(音量) 必须在 [-10, 10] 范围内")
+            raise ValueError("volume(音量) 必须在 [-10, 10] 范围内")
         # 1.2 speed 范围 [-2, 6]
         if not -2 <= self.speed <= 6:
-            raise ValueError(f"speed(语速) 必须在 [-2, 6] 范围内")
+            raise ValueError("speed(语速) 必须在 [-2, 6] 范围内")
         # 1.3 primary_language 只能为 1 或 2（1 为中文,2 为英文）
         if self.primary_language not in [1, 2]:
-            raise ValueError(f"primary_language(主语言类型)必须为 1 (中文) 或 2 (英文)")
+            raise ValueError("primary_language(主语言类型)必须为 1 (中文) 或 2 (英文)")
         # 1.4 sample_rate 只能为 16000 或 8000
         if self.sample_rate not in [16000, 8000]:
-            raise ValueError(f"sample_rate(音频采样率)必须为 16000 或 8000")
+            raise ValueError("sample_rate(音频采样率)必须为 16000 或 8000")
         # 1.5 save_path 不能为空,且必须是一个目录（可以不存在,不存在时会自动创建）
         if not self.save_path or not self.looks_like_dir():
-            raise ValueError(f"save_path(音频文件保存路径)不能为空, 且必须是一个目录")
+            raise ValueError("save_path(音频文件保存路径)不能为空, 且必须是一个目录")
         # 1.6 voice_source 只能为 offical 或 personal
         if self.voice_source not in ["offical", "personal"]:
-            raise ValueError(f"voice_source(音色来源)必须为 offical(官方音色) 或 personal(个人音色)")
+            raise ValueError("voice_source(音色来源)必须为 offical(官方音色) 或 personal(个人音色)")
         # 1.7 text 不能为空
         if not self.text:
-            raise ValueError(f"text(待合成文本)不能为空")
-
-
+            raise ValueError("text(待合成文本)不能为空")
 
         # 2. speed 截断到两位小数（非四舍五入）
         d = Decimal(str(self.speed)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
@@ -101,7 +99,7 @@ class TtsRequest:
             req.VoiceType = FAST_VOICE_TYPE_ID
             req.FastVoiceType = self.voice_id
         else:
-            req.VoiceType = self.voice_id
+            req.VoiceType = int(self.voice_id)
         
         return req
 
