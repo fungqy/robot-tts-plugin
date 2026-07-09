@@ -46,7 +46,7 @@ class TtsRequest:
     text: str = ""                  # 待合成文本
     save_path: str = ""             # 音频文件保存路径
     voice_id: str = "101008"        # 音色
-    voice_source: str = "offical"   # 音色来源: offical(官方音色) 或 personal(个人音色)
+    source: str = "offical"         # 音色来源: offical(官方音色) 或 personal(个人音色)
     volume: float = 0               # 音量 [-10, 10]
     speed: float = 1.0              # 语速 [-2, 6]
     primary_language: int = 1       # 主语言类型: 1 (中文) 或 2 (英文)
@@ -72,9 +72,9 @@ class TtsRequest:
         # 1.5 save_path 不能为空,且必须是一个目录（可以不存在,不存在时会自动创建）
         if not self.save_path or not self.looks_like_dir():
             raise ValueError("save_path(音频文件保存路径)不能为空, 且必须是一个目录")
-        # 1.6 voice_source 只能为 offical 或 personal
-        if self.voice_source not in ["offical", "personal"]:
-            raise ValueError("voice_source(音色来源)必须为 offical(官方音色) 或 personal(个人音色)")
+        # 1.6 source 只能为 offical 或 personal
+        if self.source not in ["offical", "personal"]:
+            raise ValueError("source(音色来源)必须为 offical(官方音色) 或 personal(个人音色)")
         # 1.7 text 不能为空
         if not self.text:
             raise ValueError("text(待合成文本)不能为空")
@@ -95,7 +95,7 @@ class TtsRequest:
         req.PrimaryLanguage = self.primary_language
 
         # 处理音色
-        if self.voice_source == "personal":
+        if self.source == "personal":
             req.VoiceType = FAST_VOICE_TYPE_ID
             req.FastVoiceType = self.voice_id
         else:

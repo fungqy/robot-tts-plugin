@@ -21,7 +21,7 @@ parameters:
     save_path:
       type: string
       description: "保存音频文件位置(必填)"
-    voice_source:
+    source:
       type: string
       description: "音色来源(可选值: offical 或 personal, 默认: offical)"
     volume:
