@@ -377,7 +377,7 @@ class LongTextTtsEngine:
 
 def execute(parameters: dict[str, Any]):
     from dotenv import load_dotenv
-    load_dotenv(".env.local")
+    load_dotenv(".env")
     # 配置
     SECRET_ID = os.getenv("TENCENT_ACCESS_SECRET_ID")
     SECRET_KEY = os.getenv("TENCENT_ACCESS_SECRET_KEY")
