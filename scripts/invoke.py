@@ -131,8 +131,6 @@ class TextSplitter:
 class TencentTtsClient:
     """腾讯云 TTS 客户端封装"""
 
-    FAST_VOICE_TYPE_ID = 200000000  # 复刻音色固定 ID
-
     def __init__(self, secret_id: str, secret_key: str, region: str = "ap-guangzhou"):
         cred = credential.Credential(secret_id, secret_key)
         self.client = tts_client.TtsClient(cred, region)
@@ -343,7 +341,7 @@ class LongTextTtsEngine:
             except Exception as e:
                 # 记录第一个错误，继续收集其他已完成结果后统一抛出
                 if first_error is None:
-                    first_error = RuntimeError(f"第 {idx + 1} 段合成失败: {e}")
+                    first_error = RuntimeError(e)
 
         # 若有段失败，取消尚未开始的 future 并抛出第一个错误
         if first_error is not None:
